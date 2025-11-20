@@ -44,6 +44,22 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
             [\App\Http\Controllers\Api\V1\ProductDescriptionController::class, 'show'])
             ->name('products.show');
 
+        /**
+         * Asynchroniczne generowanie opisów produktów
+         * Async product description generation
+         */
+        Route::post('products/generate-description-async',
+            [\App\Http\Controllers\Api\V1\ProductDescriptionController::class, 'generateAsync'])
+            ->name('products.generate-async');
+
+        Route::get('products/async-status/{requestId}',
+            [\App\Http\Controllers\Api\V1\ProductDescriptionController::class, 'getAsyncStatus'])
+            ->name('products.async-status');
+
+        Route::get('products/by-external-id/{externalProductId}',
+            [\App\Http\Controllers\Api\V1\ProductDescriptionController::class, 'getByExternalProductId'])
+            ->name('products.by-external-id');
+
         // Route::delete('products/descriptions/{id}',
         //     [ProductDescriptionController::class, 'destroy'])
         //     ->name('products.destroy');

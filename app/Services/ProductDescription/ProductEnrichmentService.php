@@ -49,6 +49,7 @@ class ProductEnrichmentService
         ];
 
         $sources = [];
+        $serperCost = 0.0;
 
         // Jeśli brakuje danych, spróbuj je uzupełnić
         if (!empty($missingFields) && $input->name) {
@@ -57,16 +58,27 @@ class ProductEnrichmentService
                 $searchQuery = $this->buildSearchQuery($input);
 
                 // Wyszukaj URLs
+                $searchStart = microtime(true);
                 $urls = $this->searchService->search(
                     $searchQuery,
                     config('api.processing.max_enrichment_urls', 3)
                 );
+                $searchTime = (int) ((microtime(true) - $searchStart) * 1000);
+                Log::info('Enrichment timing: Serper Search', ['time_ms' => $searchTime, 'urls_found' => count($urls)]);
+
+                // Oblicz koszt Serper API (1 token za zapytanie, $1 za 1000 tokenów = $0.001 za token)
+                $serperTokens = 1; // Każde zapytanie zużywa 1 token
+                $serperCost = $serperTokens * 0.001; // $0.001 za token
 
                 // Scrapuj URLs
                 if (!empty($urls)) {
+                    $scrapeStart = microtime(true);
                     $scrapingResults = $this->scraperService->scrapeMultiple($urls);
+                    $scrapeTime = (int) ((microtime(true) - $scrapeStart) * 1000);
+                    Log::info('Enrichment timing: Web Scraping', ['time_ms' => $scrapeTime, 'urls_count' => count($urls)]);
 
                     // Ekstraktuj dane z każdego URL
+                    $extractStart = microtime(true);
                     foreach ($scrapingResults as $result) {
                         if ($result->success) {
                             $html = $result->data['html'] ?? '';
@@ -79,6 +91,8 @@ class ProductEnrichmentService
                             }
                         }
                     }
+                    $extractTime = (int) ((microtime(true) - $extractStart) * 1000);
+                    Log::info('Enrichment timing: Data Extraction', ['time_ms' => $extractTime]);
                 }
             } catch (\Exception $e) {
                 Log::warning('Product enrichment failed', [
@@ -89,10 +103,10 @@ class ProductEnrichmentService
             }
         }
 
-        // Upewnij się że wszystkie wymagane pola są wypełnione (fallback)
+        // Upewnij się że wymagane pola tekstowe są wypełnione (fallback)
+        // Cena pozostaje null jeśli nie została podana
         $enrichedData['name'] = $enrichedData['name'] ?? 'Produkt';
         $enrichedData['manufacturer'] = $enrichedData['manufacturer'] ?? 'Nieznany';
-        $enrichedData['price'] = $enrichedData['price'] ?? 0.0;
 
         return new EnrichedProductDTO(
             name: $enrichedData['name'],
@@ -107,7 +121,8 @@ class ProductEnrichmentService
             images: $enrichedData['images'] ?? [],
             sku: $enrichedData['sku'] ?? null,
             gtin: $enrichedData['gtin'] ?? null,
-            rating: $enrichedData['rating'] ?? null
+            rating: $enrichedData['rating'] ?? null,
+            serperCost: $serperCost
         );
     }
 

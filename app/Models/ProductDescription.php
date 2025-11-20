@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\ProductDescriptionStatus;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -34,6 +35,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class ProductDescription extends Model
 {
+    use HasFactory;
+
     /**
      * Atrybuty które mogą być masowo przypisywane.
      * The attributes that are mass assignable.
@@ -44,6 +47,7 @@ class ProductDescription extends Model
         'user_id',
         'api_key_id',
         'request_id',
+        'external_product_id',
         'input_data',
         'enriched_data',
         'generated_description',
@@ -106,6 +110,17 @@ class ProductDescription extends Model
     }
 
     /**
+     * Relacja do logu użycia API.
+     * Każdy opis ma jeden powiązany log użycia API.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne<ApiUsageLog>
+     */
+    public function apiUsageLog(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(ApiUsageLog::class);
+    }
+
+    /**
      * Scope do filtrowania tylko zakończonych opisów.
      * Zwraca tylko opisy ze statusem COMPLETED.
      *
@@ -151,6 +166,19 @@ class ProductDescription extends Model
     public function scopeByStatus(Builder $query, ProductDescriptionStatus $status): void
     {
         $query->where('status', $status);
+    }
+
+    /**
+     * Scope do filtrowania według zewnętrznego ID produktu.
+     * Filters by external product ID from client.
+     *
+     * @param Builder<ProductDescription> $query
+     * @param string $externalProductId
+     * @return void
+     */
+    public function scopeByExternalProductId(Builder $query, string $externalProductId): void
+    {
+        $query->where('external_product_id', $externalProductId);
     }
 
     /**

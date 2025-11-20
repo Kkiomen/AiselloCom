@@ -87,8 +87,8 @@ return [
      * Limity przetwarzania
      */
     'processing' => [
-        'max_enrichment_urls' => env('API_MAX_ENRICHMENT_URLS', 5), // Maksymalna liczba URLs do scrapowania
-        'scraping_timeout' => env('API_SCRAPING_TIMEOUT', 15), // Timeout dla scrapingu (sekundy)
+        'max_enrichment_urls' => env('API_MAX_ENRICHMENT_URLS', 3), // Maksymalna liczba URLs do scrapowania (3 wystarczy dla dobrego wzbogacenia)
+        'scraping_timeout' => env('API_SCRAPING_TIMEOUT', 10), // Timeout dla scrapingu (sekundy)
         'max_tokens' => env('API_MAX_TOKENS', 1500), // Maksymalna liczba tokenów w odpowiedzi AI
         'ai_timeout' => env('API_AI_TIMEOUT', 30), // Timeout dla requestu do AI (sekundy)
     ],

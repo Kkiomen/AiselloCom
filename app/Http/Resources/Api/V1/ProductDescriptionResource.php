@@ -22,6 +22,7 @@ class ProductDescriptionResource extends JsonResource
         return [
             'id' => $this->id,
             'request_id' => $this->request_id,
+            'external_product_id' => $this->external_product_id,
             'status' => $this->status->value,
             'status_label' => $this->status->label(),
 

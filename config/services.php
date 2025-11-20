@@ -65,7 +65,7 @@ return [
         'api_key' => env('OPENAI_API_KEY'),
         'organization' => env('OPENAI_ORGANIZATION'),
         'model' => env('OPENAI_MODEL', 'gpt-4o-mini'),
-        'max_tokens' => (int) env('OPENAI_MAX_TOKENS', 1500),
+        'max_tokens' => (int) env('OPENAI_MAX_TOKENS', 1000), // Zmniejszono z 1500 dla szybszej odpowiedzi
         'temperature' => (float) env('OPENAI_TEMPERATURE', 0.7),
         'top_p' => (float) env('OPENAI_TOP_P', 1.0),
         'frequency_penalty' => (float) env('OPENAI_FREQUENCY_PENALTY', 0.0),
@@ -78,7 +78,7 @@ return [
      * Konfiguracja dla web scrapingu
      */
     'scraping' => [
-        'timeout' => (int) env('SCRAPING_TIMEOUT', 15),
+        'timeout' => (int) env('SCRAPING_TIMEOUT', 10), // Zmniejszono z 15s dla szybszego działania
         'max_retries' => (int) env('SCRAPING_MAX_RETRIES', 3),
         'retry_delay' => (int) env('SCRAPING_RETRY_DELAY', 1000), // milliseconds
         'user_agents' => [

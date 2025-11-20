@@ -30,6 +30,7 @@ class UserSeeder extends Seeder
             'password' => bcrypt('password'),
             'api_rate_limit' => 1000, // Wyższy limit dla testów / Higher limit for testing
             'is_active' => true,
+            'is_admin' => true, // Administrator panelu / Admin panel access
             'email_verified_at' => now(),
         ]);
 

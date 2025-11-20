@@ -15,6 +15,12 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+
+                    @if(Auth::user()->is_admin)
+                        <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.*')">
+                            {{ __('admin.dashboard') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 
@@ -34,6 +40,12 @@
                     </x-slot>
 
                     <x-slot name="content">
+                        @if(Auth::user()->is_admin)
+                            <x-dropdown-link :href="route('admin.dashboard')">
+                                {{ __('admin.dashboard') }}
+                            </x-dropdown-link>
+                        @endif
+
                         <x-dropdown-link :href="route('profile.edit')">
                             {{ __('Profile') }}
                         </x-dropdown-link>
@@ -70,6 +82,12 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+
+            @if(Auth::user()->is_admin)
+                <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.*')">
+                    {{ __('admin.dashboard') }}
+                </x-responsive-nav-link>
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->

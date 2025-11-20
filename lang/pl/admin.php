@@ -1,0 +1,48 @@
+<?php
+
+/**
+ * Admin panel translations - Polish
+ */
+
+return [
+    'dashboard' => 'Panel Administratora',
+    'total_users' => 'U|ytkownicy',
+    'total_descriptions' => 'Opisy',
+    'completed' => 'UkoDczone',
+    'financials' => 'Finanse',
+    'today' => 'Dzisiaj',
+    'this_month' => 'Ten miesic',
+    'all_time' => 'Acznie',
+    'profit' => 'Zysk',
+    'total_cost' => 'Koszt caBkowity',
+    'revenue' => 'Przychód',
+    'net_profit' => 'Zysk netto',
+    'recent_generations' => 'Ostatnie generacje',
+    'view_all' => 'Zobacz wszystkie',
+    'user' => 'U|ytkownik',
+    'product' => 'Produkt',
+    'status' => 'Status',
+    'cost' => 'Koszt',
+    'date' => 'Data',
+    'no_data' => 'Brak danych',
+    'all_descriptions' => 'Wszystkie opisy',
+    'detailed_financials' => 'SzczegóBowe finanse',
+    'manage_users' => 'Zarzdzaj u|ytkownikami',
+    'user_updated' => 'U|ytkownik zaktualizowany',
+    'descriptions' => 'Wygenerowane opisy',
+    'users' => 'U|ytkownicy',
+    'email' => 'Email',
+    'api_keys' => 'Klucze API',
+    'admin' => 'Admin',
+    'actions' => 'Akcje',
+    'make_admin' => 'Nadaj admina',
+    'remove_admin' => 'UsuD admina',
+    'filter' => 'Filtruj',
+    'search' => 'Szukaj',
+    'all_statuses' => 'Wszystkie statusy',
+    'all_users' => 'Wszyscy u|ytkownicy',
+    'name' => 'Nazwa',
+    'company' => 'Firma',
+    'created' => 'Utworzono',
+    'view_details' => 'Zobacz szczegóBy',
+];

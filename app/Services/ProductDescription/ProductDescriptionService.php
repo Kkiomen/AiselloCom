@@ -10,6 +10,7 @@ use App\Models\ApiUsageLog;
 use App\Models\ProductDescription;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
@@ -62,6 +63,7 @@ class ProductDescriptionService
                 $productDescription->markAsProcessing();
 
                 // 3. Wzbogać dane produktu (enrichment) lub użyj podanych danych
+                $enrichmentStart = microtime(true);
                 if ($input->autoEnrich) {
                     // Tryb auto-wzbogacania: szukaj w internecie (droższe, lepsze opisy)
                     $enrichedProduct = $this->enrichmentService->enrich($input);
@@ -69,13 +71,18 @@ class ProductDescriptionService
                     // Tryb bez wzbogacania: użyj tylko podanych danych (tańsze, szybsze)
                     $enrichedProduct = $this->createEnrichedFromInput($input);
                 }
+                $enrichmentTime = (int) ((microtime(true) - $enrichmentStart) * 1000);
+                Log::info('ProductDescription timing: Enrichment', ['time_ms' => $enrichmentTime]);
 
                 // Zapisz wzbogacone dane
                 $productDescription->enriched_data = $enrichedProduct->toArray();
                 $productDescription->save();
 
                 // 4. Generuj opis przez AI
+                $aiStart = microtime(true);
                 $generatedDescription = $this->generatorService->generate($enrichedProduct, $user, $input->language);
+                $aiTime = (int) ((microtime(true) - $aiStart) * 1000);
+                Log::info('ProductDescription timing: AI Generation', ['time_ms' => $aiTime]);
 
                 // 5. Zapisz wynik
                 $processingTime = (int) ((microtime(true) - $startTime) * 1000);
@@ -96,14 +103,15 @@ class ProductDescriptionService
                     'endpoint' => '/api/v1/products/generate-description',
                     'tokens_used' => $generatedDescription->getTotalTokens(),
                     'cost' => $generatedDescription->cost,
+                    'serper_cost' => $enrichedProduct->serperCost,
                     'response_time_ms' => $processingTime,
                 ];
-                
+
                 // Dodaj product_description_id tylko jeśli kolumna istnieje
                 if (Schema::hasColumn('api_usage_logs', 'product_description_id')) {
                     $logData['product_description_id'] = $productDescription->id;
                 }
-                
+
                 ApiUsageLog::create($logData);
 
                 return $productDescription->fresh();
@@ -128,7 +136,7 @@ class ProductDescriptionService
         return new EnrichedProductDTO(
             name: $input->name ?? 'Produkt',
             manufacturer: $input->manufacturer ?? 'Nieznany',
-            price: $input->price ?? 0.0,
+            price: $input->price,
             description: $input->description,
             attributes: $input->attributes ?? [],
             sources: [],

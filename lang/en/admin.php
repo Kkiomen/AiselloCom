@@ -1,0 +1,48 @@
+<?php
+
+/**
+ * Admin panel translations - English
+ */
+
+return [
+    'dashboard' => 'Admin Dashboard',
+    'total_users' => 'Total Users',
+    'total_descriptions' => 'Total Descriptions',
+    'completed' => 'Completed',
+    'financials' => 'Financials',
+    'today' => 'Today',
+    'this_month' => 'This Month',
+    'all_time' => 'All Time',
+    'profit' => 'Profit',
+    'total_cost' => 'Total Cost',
+    'revenue' => 'Revenue',
+    'net_profit' => 'Net Profit',
+    'recent_generations' => 'Recent Generations',
+    'view_all' => 'View All',
+    'user' => 'User',
+    'product' => 'Product',
+    'status' => 'Status',
+    'cost' => 'Cost',
+    'date' => 'Date',
+    'no_data' => 'No data available',
+    'all_descriptions' => 'All Descriptions',
+    'detailed_financials' => 'Detailed Financials',
+    'manage_users' => 'Manage Users',
+    'user_updated' => 'User updated successfully',
+    'descriptions' => 'Generated Descriptions',
+    'users' => 'Users',
+    'email' => 'Email',
+    'api_keys' => 'API Keys',
+    'admin' => 'Admin',
+    'actions' => 'Actions',
+    'make_admin' => 'Make Admin',
+    'remove_admin' => 'Remove Admin',
+    'filter' => 'Filter',
+    'search' => 'Search',
+    'all_statuses' => 'All Statuses',
+    'all_users' => 'All Users',
+    'name' => 'Name',
+    'company' => 'Company',
+    'created' => 'Created',
+    'view_details' => 'View Details',
+];

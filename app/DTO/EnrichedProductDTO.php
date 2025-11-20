@@ -15,7 +15,7 @@ readonly class EnrichedProductDTO
      *
      * @param string $name Nazwa produktu
      * @param string $manufacturer Producent
-     * @param float $price Cena
+     * @param float|null $price Cena (null jeśli nie podano)
      * @param string|null $description Opis
      * @param array $attributes Atrybuty produktu
      * @param array $sources URLs źródłowe
@@ -26,11 +26,12 @@ readonly class EnrichedProductDTO
      * @param string|null $sku Numer SKU
      * @param string|null $gtin GTIN/EAN
      * @param float|null $rating Ocena produktu
+     * @param float $serperCost Koszt zapytania do Serper API
      */
     public function __construct(
         public string $name,
         public string $manufacturer,
-        public float $price,
+        public ?float $price,
         public ?string $description,
         public array $attributes,
         public array $sources,
@@ -41,6 +42,7 @@ readonly class EnrichedProductDTO
         public ?string $sku = null,
         public ?string $gtin = null,
         public ?float $rating = null,
+        public float $serperCost = 0.0,
     ) {
     }
 
@@ -58,7 +60,6 @@ readonly class EnrichedProductDTO
             'price' => $this->price,
             'description' => $this->description,
             'attributes' => $this->attributes,
-            'sources' => $this->sources,
             'original_input' => $this->originalInput,
             'category' => $this->category,
             'availability' => $this->availability,
@@ -79,7 +80,11 @@ readonly class EnrichedProductDTO
     {
         $text = "Nazwa: {$this->name}\n";
         $text .= "Producent: {$this->manufacturer}\n";
-        $text .= "Cena: {$this->price} PLN\n";
+
+        // Cena - tylko jeśli została podana
+        if ($this->price !== null) {
+            $text .= "Cena: {$this->price} PLN\n";
+        }
 
         if ($this->category) {
             $text .= "Kategoria: {$this->category}\n";

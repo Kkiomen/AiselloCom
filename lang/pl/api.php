@@ -37,7 +37,13 @@ return [
         'generated_successfully' => 'Opis produktu został pomyślnie wygenerowany.',
         'generation_failed' => 'Nie udało się wygenerować opisu produktu.',
         'not_found' => 'Nie znaleziono opisu produktu.',
+        'queued_successfully' => 'Zadanie generowania opisu zostało dodane do kolejki.',
+        'queue_failed' => 'Nie udało się dodać zadania do kolejki.',
     ],
+
+    // Asynchroniczne generowanie
+    'user_or_key_not_found' => 'Nie znaleziono użytkownika lub klucza API.',
+    'async_generation_failed' => 'Asynchroniczne generowanie opisu nie powiodło się',
 
     // Walidacja
     'validation' => [
@@ -47,5 +53,7 @@ return [
         'price_numeric' => 'Cena musi być liczbą.',
         'price_min' => 'Cena musi być większa lub równa 0.',
         'prompt_not_found' => 'Nie znaleziono wybranego promptu.',
+        'external_product_id_string' => 'Zewnętrzny ID produktu musi być tekstem.',
+        'external_product_id_max' => 'Zewnętrzny ID produktu nie może być dłuższy niż 255 znaków.',
     ],
 ];

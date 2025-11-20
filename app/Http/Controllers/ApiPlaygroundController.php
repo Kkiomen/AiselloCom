@@ -285,7 +285,9 @@ class ApiPlaygroundController extends Controller
                         'required' => false,
                         'help' => 'Language in which the description will be generated',
                         'help_pl' => 'Język w jakim zostanie wygenerowany opis',
-                        'default' => 'pl',
+                        // Domyślny język zależy od locale użytkownika
+                        // Default language depends on user locale
+                        'default' => app()->getLocale(),
                         'options' => [
                             'pl' => 'Polski',
                             'en' => 'English',

@@ -44,10 +44,15 @@ class PromptBuilderService
         $languageName = $languageNames[$language] ?? $language;
 
         // Przygotuj dane do interpolacji
+        // Formatuj cenę lub oznacz jako "Nie podano" jeśli null
+        $priceFormatted = $product->price !== null
+            ? number_format($product->price, 2, ',', ' ')
+            : 'Nie podano';
+
         $placeholders = [
             '{name}' => $product->name,
             '{manufacturer}' => $product->manufacturer,
-            '{price}' => number_format($product->price, 2, ',', ' '),
+            '{price}' => $priceFormatted,
             '{description}' => $product->description ?? 'Brak dodatkowego opisu',
             '{attributes}' => $this->formatAttributes($product->attributes),
             '{language}' => $languageName,

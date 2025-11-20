@@ -6,6 +6,9 @@ use App\DTO\ScrapingResultDTO;
 use App\Exceptions\ScrapingException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Pool;
+use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7\Response;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -97,16 +100,73 @@ class WebScraperService
      * Scrapuje wiele URLs równolegle.
      * Scrapes multiple URLs in parallel.
      *
+     * Używa Guzzle Pool dla równoległego wykonywania requestów.
+     *
      * @param array $urls
      * @return array<ScrapingResultDTO>
      */
     public function scrapeMultiple(array $urls): array
     {
-        $results = [];
-
-        foreach ($urls as $url) {
-            $results[] = $this->scrape($url);
+        if (empty($urls)) {
+            return [];
         }
+
+        // Przygotuj results array z zachowaniem kolejności
+        $results = array_fill(0, count($urls), null);
+
+        // Losowy User-Agent z konfiguracji
+        $userAgents = config('services.scraping.user_agents');
+
+        // Przygotuj generator requestów
+        $requests = function () use ($urls, $userAgents) {
+            foreach ($urls as $index => $url) {
+                $userAgent = $userAgents[array_rand($userAgents)];
+
+                yield $index => new Request('GET', $url, [
+                    'User-Agent' => $userAgent,
+                    'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                    'Accept-Language' => 'pl,en-US;q=0.7,en;q=0.3',
+                ]);
+            }
+        };
+
+        // Wykonaj requesty równolegle używając Pool
+        $pool = new Pool($this->client, $requests(), [
+            'concurrency' => 5, // Maksymalnie 5 równoległych requestów
+            'fulfilled' => function (Response $response, $index) use (&$results, $urls) {
+                // Sukces - zapisz HTML
+                $html = $response->getBody()->getContents();
+
+                $results[$index] = new ScrapingResultDTO(
+                    url: $urls[$index],
+                    success: true,
+                    data: ['html' => $html],
+                    error: null
+                );
+            },
+            'rejected' => function ($reason, $index) use (&$results, $urls) {
+                // Błąd - zapisz informację o błędzie
+                $errorMessage = $reason instanceof \Exception
+                    ? $reason->getMessage()
+                    : 'Unknown error';
+
+                Log::warning('Web scraping failed (parallel)', [
+                    'url' => $urls[$index],
+                    'error' => $errorMessage,
+                ]);
+
+                $results[$index] = new ScrapingResultDTO(
+                    url: $urls[$index],
+                    success: false,
+                    data: [],
+                    error: $errorMessage
+                );
+            },
+        ]);
+
+        // Czekaj na zakończenie wszystkich requestów
+        $promise = $pool->promise();
+        $promise->wait();
 
         return $results;
     }

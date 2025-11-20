@@ -148,8 +148,16 @@
             @if(!$apiKeys->isEmpty())
             <!-- Endpoint Info -->
             <div class="card">
-                <h4 class="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">Endpoint</h4>
-                <div class="flex items-center gap-2">
+                <div class="flex items-center justify-between mb-2">
+                    <h4 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Endpoint</h4>
+                    <a href="{{ route('api.docs', $slug) }}" class="text-xs text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                        </svg>
+                        {{ app()->getLocale() === 'pl' ? 'Dokumentacja' : 'Documentation' }}
+                    </a>
+                </div>
+                <div class="flex items-center gap-2 mb-3">
                     <span class="px-2 py-0.5 text-xs font-semibold rounded bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400">
                         {{ $apiConfig['method'] }}
                     </span>
@@ -157,6 +165,21 @@
                         {{ url($apiConfig['endpoint']) }}
                     </code>
                 </div>
+
+                <!-- Request Body (collapsible) -->
+                <details class="border border-gray-200 dark:border-gray-700 rounded-lg">
+                    <summary class="px-3 py-2 cursor-pointer text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/50 flex items-center justify-between">
+                        <span>Request Body</span>
+                        <div class="flex items-center gap-2">
+                            <button type="button" onclick="event.stopPropagation(); copyRequestBody()" class="text-xs text-indigo-600 dark:text-indigo-400 hover:underline">
+                                {{ app()->getLocale() === 'pl' ? 'Kopiuj' : 'Copy' }}
+                            </button>
+                        </div>
+                    </summary>
+                    <div class="border-t border-gray-200 dark:border-gray-700">
+                        <pre id="requestBodyPreview" class="text-xs p-3 overflow-x-auto max-h-64 bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 font-mono">{}</pre>
+                    </div>
+                </details>
             </div>
             @endif
 
@@ -224,11 +247,14 @@
                                     {{ __('ui.playground.loading.analyzing') }}
                                 </p>
                                 <!-- Progress dots with bounce animation -->
-                                <div class="flex justify-center gap-1.5 mb-6">
-                                    <div id="progressDot1" class="w-2.5 h-2.5 rounded-full bg-indigo-600 dark:bg-indigo-400 transition-all duration-300"></div>
-                                    <div id="progressDot2" class="w-2.5 h-2.5 rounded-full bg-gray-300 dark:bg-gray-600 transition-all duration-300"></div>
-                                    <div id="progressDot3" class="w-2.5 h-2.5 rounded-full bg-gray-300 dark:bg-gray-600 transition-all duration-300"></div>
-                                    <div id="progressDot4" class="w-2.5 h-2.5 rounded-full bg-gray-300 dark:bg-gray-600 transition-all duration-300"></div>
+                                <div class="flex justify-center gap-1 mb-6">
+                                    <div id="progressDot1" class="w-2 h-2 rounded-full bg-indigo-600 dark:bg-indigo-400 transition-all duration-300"></div>
+                                    <div id="progressDot2" class="w-2 h-2 rounded-full bg-gray-300 dark:bg-gray-600 transition-all duration-300"></div>
+                                    <div id="progressDot3" class="w-2 h-2 rounded-full bg-gray-300 dark:bg-gray-600 transition-all duration-300"></div>
+                                    <div id="progressDot4" class="w-2 h-2 rounded-full bg-gray-300 dark:bg-gray-600 transition-all duration-300"></div>
+                                    <div id="progressDot5" class="w-2 h-2 rounded-full bg-gray-300 dark:bg-gray-600 transition-all duration-300"></div>
+                                    <div id="progressDot6" class="w-2 h-2 rounded-full bg-gray-300 dark:bg-gray-600 transition-all duration-300"></div>
+                                    <div id="progressDot7" class="w-2 h-2 rounded-full bg-gray-300 dark:bg-gray-600 transition-all duration-300"></div>
                                 </div>
                                 <!-- Animated skeleton preview -->
                                 <div class="space-y-3 mt-4 text-left">
@@ -277,7 +303,10 @@
         const loadingMessages = [
             '{{ __('ui.playground.loading.analyzing') }}',
             '{{ __('ui.playground.loading.collecting') }}',
+            '{{ __('ui.playground.loading.researching') }}',
+            '{{ __('ui.playground.loading.structuring') }}',
             '{{ __('ui.playground.loading.generating') }}',
+            '{{ __('ui.playground.loading.optimizing') }}',
             '{{ __('ui.playground.loading.polishing') }}'
         ];
         let loadingInterval = null;
@@ -311,7 +340,7 @@
                 }, 150);
             }
             // Update progress dots with scale animation
-            for (let i = 1; i <= 4; i++) {
+            for (let i = 1; i <= 7; i++) {
                 const dot = document.getElementById('progressDot' + i);
                 if (dot) {
                     if (i <= currentMessageIndex + 1) {
@@ -319,7 +348,7 @@
                         dot.classList.add('bg-indigo-600', 'dark:bg-indigo-400');
                         // Scale up active dot
                         if (i === currentMessageIndex + 1) {
-                            dot.style.transform = 'scale(1.3)';
+                            dot.style.transform = 'scale(1.4)';
                             setTimeout(() => { dot.style.transform = 'scale(1)'; }, 200);
                         }
                     } else {
@@ -511,9 +540,90 @@
             }
         }
 
+        // Funkcja aktualizująca podgląd Request Body
+        // Function to update Request Body preview
+        function updateRequestBodyPreview() {
+            const form = document.getElementById('apiForm');
+            if (!form) return;
+
+            // Struktura z wszystkimi możliwymi polami (domyślnie null)
+            // Structure with all possible fields (default null)
+            const requestData = {
+                name: null,
+                manufacturer: null,
+                price: null,
+                description: null,
+                attributes: null,
+                language: null,
+                auto_enrich: false,
+                user_prompt_id: null
+            };
+
+            const formData = new FormData(form);
+
+            // Aktualizuj wartości z formularza
+            // Update values from form
+            formData.forEach((value, key) => {
+                // Mapuj nazwy pól playground na nazwy API
+                // Map playground field names to API field names
+                if (key === 'product_name') {
+                    requestData['name'] = value || null;
+                } else if (key === 'product_features') {
+                    requestData['description'] = value || null;
+                } else if (key === 'manufacturer') {
+                    requestData['manufacturer'] = value || null;
+                } else if (key === 'price') {
+                    requestData['price'] = value ? parseFloat(value) : null;
+                } else if (key === 'attributes') {
+                    const attrs = value ? value.split(',').map(s => s.trim()).filter(s => s) : null;
+                    requestData['attributes'] = attrs && attrs.length > 0 ? attrs : null;
+                } else if (key === 'auto_enrich') {
+                    requestData['auto_enrich'] = true;
+                } else if (key === 'user_prompt_id') {
+                    requestData['user_prompt_id'] = value ? parseInt(value) : null;
+                } else if (key === 'language') {
+                    requestData['language'] = value || null;
+                }
+            });
+
+            // Sprawdź checkbox auto_enrich (FormData nie zawiera unchecked)
+            const autoEnrichCheckbox = form.querySelector('input[name="auto_enrich"]');
+            if (autoEnrichCheckbox) {
+                requestData['auto_enrich'] = autoEnrichCheckbox.checked;
+            }
+
+            const preview = document.getElementById('requestBodyPreview');
+            if (preview) {
+                preview.textContent = JSON.stringify(requestData, null, 2);
+            }
+        }
+
+        // Funkcja kopiująca Request Body
+        // Function to copy Request Body
+        function copyRequestBody() {
+            const preview = document.getElementById('requestBodyPreview');
+            if (preview) {
+                navigator.clipboard.writeText(preview.textContent);
+            }
+        }
+
         window.addEventListener('load', function() {
             const sel = document.getElementById('promptSelector');
             if (sel && sel.value) sel.dispatchEvent(new Event('change'));
+
+            // Inicjalizuj podgląd Request Body
+            // Initialize Request Body preview
+            updateRequestBodyPreview();
+
+            // Dodaj event listenery do wszystkich pól formularza
+            // Add event listeners to all form fields
+            const form = document.getElementById('apiForm');
+            if (form) {
+                form.querySelectorAll('input, textarea, select').forEach(field => {
+                    field.addEventListener('input', updateRequestBodyPreview);
+                    field.addEventListener('change', updateRequestBodyPreview);
+                });
+            }
         });
     </script>
 </x-app-layout>

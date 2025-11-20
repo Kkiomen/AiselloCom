@@ -51,9 +51,12 @@ class ProductDescriptionCompleteTest extends TestCase
         ]);
 
         $response->assertStatus(401);
+        $response->assertJsonStructure([
+            'message',
+            'error',
+        ]);
         $response->assertJson([
-            'success' => false,
-            'message' => 'Unauthorized',
+            'error' => 'missing_api_key',
         ]);
     }
 
@@ -227,14 +230,12 @@ class ProductDescriptionCompleteTest extends TestCase
 
         $response->assertStatus(201); // 201 Created
 
-        // Powinno mieć sources z scrapingu (może być 0 jeśli API nie działa)
-        $sources = $response->json('data.enriched_data.sources');
-        $this->assertIsArray($sources);
-
-        // Sprawdź że wzbogacone dane mają dodatkowe pola
+        // Sprawdź że wzbogacone dane mają wymagane pola
+        // Uwaga: sources zostało usunięte z odpowiedzi API w celu ukrycia źródeł scrapingu
         $enrichedData = $response->json('data.enriched_data');
         $this->assertArrayHasKey('manufacturer', $enrichedData);
         $this->assertArrayHasKey('price', $enrichedData);
+        $this->assertArrayNotHasKey('sources', $enrichedData);
     }
 
     /**

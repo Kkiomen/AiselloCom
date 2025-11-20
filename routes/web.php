@@ -43,6 +43,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/explorer', [\App\Http\Controllers\ApiExplorerController::class, 'index'])->name('explorer');
         Route::get('/playground/{slug}', [\App\Http\Controllers\ApiPlaygroundController::class, 'show'])->name('playground');
         Route::post('/playground/{slug}/execute', [\App\Http\Controllers\ApiPlaygroundController::class, 'execute'])->name('playground.execute');
+        Route::get('/docs/{slug}', [\App\Http\Controllers\ApiDocumentationController::class, 'show'])->name('docs');
     });
 
     // Usage & Stats routes / Trasy użycia i statystyk
@@ -51,6 +52,16 @@ Route::middleware('auth')->group(function () {
     // User Prompts routes / Trasy promptów użytkownika
     Route::resource('user-prompts', \App\Http\Controllers\UserPromptController::class);
     Route::post('/user-prompts/{userPrompt}/set-default', [\App\Http\Controllers\UserPromptController::class, 'setDefault'])->name('user-prompts.set-default');
+});
+
+// Admin routes / Trasy administracyjne
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\Admin\AdminDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/descriptions', [\App\Http\Controllers\Admin\AdminDashboardController::class, 'descriptions'])->name('descriptions');
+    Route::get('/descriptions/{description}', [\App\Http\Controllers\Admin\AdminDashboardController::class, 'showDescription'])->name('descriptions.show');
+    Route::get('/financials', [\App\Http\Controllers\Admin\AdminDashboardController::class, 'financials'])->name('financials');
+    Route::get('/users', [\App\Http\Controllers\Admin\AdminDashboardController::class, 'users'])->name('users');
+    Route::post('/users/{user}/toggle-admin', [\App\Http\Controllers\Admin\AdminDashboardController::class, 'toggleAdmin'])->name('users.toggle-admin');
 });
 
 require __DIR__.'/auth.php';

@@ -14,6 +14,13 @@ use Illuminate\Support\Str;
 class ProductDescriptionFactory extends Factory
 {
     /**
+     * Model powiązany z fabryką.
+     * The name of the factory's corresponding model.
+     *
+     * @var class-string<\App\Models\ProductDescription>
+     */
+    protected $model = \App\Models\ProductDescription::class;
+    /**
      * Define the model's default state.
      *
      * @return array<string, mixed>

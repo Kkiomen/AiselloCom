@@ -45,6 +45,7 @@ class ApiUsageLog extends Model
         'endpoint',
         'tokens_used',
         'cost',
+        'serper_cost',
         'response_time_ms',
     ];
 
@@ -57,7 +58,8 @@ class ApiUsageLog extends Model
     {
         return [
             'tokens_used' => 'integer',
-            'cost' => 'decimal:4',
+            'cost' => 'decimal:6',
+            'serper_cost' => 'decimal:6',
             'response_time_ms' => 'integer',
             'created_at' => 'datetime',
         ];

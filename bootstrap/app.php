@@ -12,10 +12,17 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Dodaj middleware SetLocale do web middleware stack
+        // Add SetLocale middleware to web middleware stack
+        $middleware->web(append: [
+            \App\Http\Middleware\SetLocale::class,
+        ]);
+
         // Rejestracja custom middleware z aliasami
         $middleware->alias([
             'auth.api.key' => \App\Http\Middleware\AuthenticateApiKey::class,
             'api.rate.limit' => \App\Http\Middleware\CheckApiRateLimit::class,
+            'admin' => \App\Http\Middleware\IsAdmin::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

@@ -21,6 +21,7 @@ readonly class ProductInputDTO
      * @param int|null $userPromptId ID customowego promptu użytkownika
      * @param bool $autoEnrich Czy automatycznie wzbogacać dane (true = droższe, lepsze opisy | false = tańsze, szybsze)
      * @param string $language Język w jakim ma być wygenerowany opis (default: pl)
+     * @param string|null $externalProductId Zewnętrzny ID produktu od klienta
      */
     public function __construct(
         public ?string $name = null,
@@ -31,6 +32,7 @@ readonly class ProductInputDTO
         public ?int $userPromptId = null,
         public bool $autoEnrich = true,
         public string $language = 'pl',
+        public ?string $externalProductId = null,
     ) {
     }
 
@@ -52,6 +54,7 @@ readonly class ProductInputDTO
             userPromptId: isset($data['user_prompt_id']) ? (int) $data['user_prompt_id'] : null,
             autoEnrich: isset($data['auto_enrich']) ? (bool) $data['auto_enrich'] : true,
             language: $data['language'] ?? 'pl',
+            externalProductId: $data['external_product_id'] ?? null,
         );
     }
 
@@ -113,6 +116,7 @@ readonly class ProductInputDTO
             'user_prompt_id' => $this->userPromptId,
             'auto_enrich' => $this->autoEnrich,
             'language' => $this->language,
+            'external_product_id' => $this->externalProductId,
         ];
     }
 }

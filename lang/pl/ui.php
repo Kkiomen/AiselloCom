@@ -182,10 +182,13 @@ return [
 
         // Progressive loading messages
         'loading' => [
-            'analyzing' => 'Analizowanie danych...',
-            'collecting' => 'Zbieranie informacji o produkcie...',
-            'generating' => 'Generowanie opisu...',
-            'polishing' => 'Dopieszczanie treści...',
+            'analyzing' => 'Analizowanie danych produktu...',
+            'collecting' => 'Zbieranie informacji z rynku...',
+            'researching' => 'Badanie słów kluczowych SEO...',
+            'structuring' => 'Tworzenie struktury opisu...',
+            'generating' => 'Generowanie treści AI...',
+            'optimizing' => 'Optymalizacja pod SEO...',
+            'polishing' => 'Finalizowanie opisu...',
         ],
     ],
 

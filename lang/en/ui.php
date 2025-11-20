@@ -182,10 +182,13 @@ return [
 
         // Progressive loading messages
         'loading' => [
-            'analyzing' => 'Analyzing data...',
-            'collecting' => 'Collecting product information...',
-            'generating' => 'Generating description...',
-            'polishing' => 'Polishing content...',
+            'analyzing' => 'Analyzing product data...',
+            'collecting' => 'Gathering market information...',
+            'researching' => 'Researching SEO keywords...',
+            'structuring' => 'Creating description structure...',
+            'generating' => 'Generating AI content...',
+            'optimizing' => 'Optimizing for SEO...',
+            'polishing' => 'Finalizing description...',
         ],
     ],
 
